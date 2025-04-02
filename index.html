@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Accelerator Showcase - TELUS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        :root {
+            --telus-purple: #4B286D;
+            --telus-green: #00A400;
+            --telus-amber: #FFB800;
+            --telus-blue: #2B70C9;
+            --telus-gray: #71757B;
+        }
+        .bg-telus-purple { background-color: var(--telus-purple); }
+        .text-telus-green { color: var(--telus-green); }
+        .border-telus-purple { border-color: var(--telus-purple); }
+        .bg-telus-green { background-color: var(--telus-green); }
+        .bg-telus-amber { background-color: var(--telus-amber); }
+        .bg-telus-blue { background-color: var(--telus-blue); }
+        .bg-telus-gray { background-color: var(--telus-gray); }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-100" x-data="{ 
+    mobileMenuOpen: false,
+    showModal: false,
+    selectedProject: null,
+    projects: {
+        'customer-service-ai': {
+            title: 'Customer Service AI',
+            problem: 'Customer support teams were overwhelmed with repetitive queries, leading to longer response times and reduced efficiency.',
+            solution: 'Developed a production-ready chatbot with custom UI and RAG-based knowledge integration, capable of handling common customer inquiries automatically.',
+            impact: 'Reduced response time by 60%, improved customer satisfaction scores by 35%, and allowed support staff to focus on complex issues.',
+            links: {
+                docs: 'https://docs.google.com/document/d/customer-service-ai',
+                github: 'https://github.com/telus/customer-service-ai'
+            },
+            team: ['Alice Kim', 'Sarah Brown', 'David Chen']
+        },
+        'internal-knowledge-assistant': {
+            title: 'Internal Knowledge Assistant',
+            problem: 'Teams struggled to quickly access and utilize vast amounts of internal documentation and knowledge.',
+            solution: 'Built a RAG-powered internal assistant that integrates with multiple knowledge bases and provides contextual responses.',
+            impact: 'Reduced time spent searching for information by 45%, improved knowledge sharing across teams.',
+            links: {
+                docs: 'https://docs.google.com/document/d/internal-knowledge-assistant',
+                github: 'https://github.com/telus/internal-knowledge-assistant'
+            },
+            team: ['Raj Patel', 'Maria Lopez', 'Mike Thompson']
+        },
+        'advanced-llm-research': {
+            title: 'Advanced LLM Research',
+            problem: 'Need to evaluate and implement cutting-edge language models for various TELUS services.',
+            solution: 'Conducting systematic research on latest LLM developments, fine-tuning models, and creating evaluation frameworks.',
+            impact: 'Identified 3 promising model architectures, reduced inference costs by 40%.',
+            links: {
+                docs: 'https://docs.google.com/document/d/llm-research',
+                github: 'https://github.com/telus/llm-research'
+            },
+            team: ['David Chen', 'Alice Kim']
+        },
+        'framework-innovation': {
+            title: 'Framework Innovation',
+            problem: 'Existing AI frameworks were not optimized for TELUS specific use cases and scale.',
+            solution: 'Developing custom AI frameworks and tools tailored to TELUS infrastructure and requirements.',
+            impact: 'Reduced deployment time by 50%, improved model performance by 25%.',
+            links: {
+                docs: 'https://docs.google.com/document/d/framework-innovation',
+                github: 'https://github.com/telus/ai-framework'
+            },
+            team: ['Raj Patel', 'Maria Lopez']
+        },
+        'mlops-framework': {
+            title: 'MLOps Framework',
+            problem: 'Inconsistent deployment and monitoring practices across ML projects.',
+            solution: 'Created a standardized MLOps framework with automated testing, deployment, and monitoring.',
+            impact: 'Reduced deployment errors by 75%, improved model monitoring coverage by 100%.',
+            links: {
+                docs: 'https://docs.google.com/document/d/mlops-framework',
+                github: 'https://github.com/telus/mlops-framework'
+            },
+            team: ['Alice Kim', 'David Chen', 'Mike Thompson']
+        },
+        'llmops-platform': {
+            title: 'LLMOps Platform',
+            problem: 'Managing and deploying LLMs required significant manual effort and expertise.',
+            solution: 'Building a comprehensive platform for LLM deployment, monitoring, and optimization.',
+            impact: 'Beta testing shows 60% reduction in LLM deployment time, 30% cost optimization.',
+            links: {
+                docs: 'https://docs.google.com/document/d/llmops-platform',
+                github: 'https://github.com/telus/llmops-platform'
+            },
+            team: ['Maria Lopez', 'Raj Patel', 'Sarah Brown']
+        },
+        'fraud-detection': {
+            title: 'Fraud Detection System',
+            problem: 'Rising fraud cases and manual review processes were causing significant financial losses.',
+            solution: 'Implemented advanced ML models for real-time fraud detection and prevention.',
+            impact: 'Reduced fraud losses by 65%, improved detection accuracy to 96%.',
+            links: {
+                docs: 'https://docs.google.com/document/d/fraud-detection',
+                github: 'https://github.com/telus/fraud-detection'
+            },
+            team: ['David Chen', 'Alice Kim', 'John Smith']
+        },
+        'cash-flow-prediction': {
+            title: 'Cash Flow Prediction',
+            problem: 'Inaccurate cash flow forecasting led to suboptimal financial planning.',
+            solution: 'Developed ML models for accurate cash flow prediction using historical data and market indicators.',
+            impact: 'Improved forecast accuracy by 40%, archived due to system integration challenges.',
+            links: {
+                docs: 'https://docs.google.com/document/d/cash-flow-prediction',
+                github: 'https://github.com/telus/cash-flow-prediction'
+            },
+            team: ['Maria Lopez', 'Sarah Brown']
+        }
+    }
+}">
+
+<!-- Project Details Modal -->
+<div x-show="showModal" 
+     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="showModal = false">
+    
+    <!-- Modal Content -->
+    <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto" 
+         @click.stop
+         x-show="showModal"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="transform scale-95 opacity-0"
+         x-transition:enter-end="transform scale-100 opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="transform scale-100 opacity-100"
+         x-transition:leave-end="transform scale-95 opacity-0">
+        
+        <!-- Modal Header -->
+        <div class="bg-telus-purple text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-xl font-semibold" x-text="selectedProject?.title"></h3>
+            <button @click="showModal = false" class="text-white hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="p-6">
+            <!-- Problem Statement -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-telus-purple mb-2">Problem Statement</h4>
+                <p class="text-gray-700" x-text="selectedProject?.problem"></p>
+            </div>
+            
+            <!-- Solution -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-telus-purple mb-2">Solution</h4>
+                <p class="text-gray-700" x-text="selectedProject?.solution"></p>
+            </div>
+            
+            <!-- Impact -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-telus-purple mb-2">Impact & Results</h4>
+                <p class="text-gray-700" x-text="selectedProject?.impact"></p>
+            </div>
+            
+            <!-- Team -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-telus-purple mb-2">Team Members</h4>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="member in selectedProject?.team" :key="member">
+                        <span class="bg-gray-100 text-telus-purple px-3 py-1 rounded-full text-sm" x-text="member"></span>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Links -->
+            <div class="flex flex-wrap gap-4">
+                <template x-if="selectedProject?.links.github">
+                    <a :href="selectedProject?.links.github" 
+                       target="_blank"
+                       class="inline-flex items-center space-x-2 bg-telus-purple text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"></path>
+                        </svg>
+                        <span>View on GitHub</span>
+                    </a>
+                </template>
+                <template x-if="selectedProject?.links.docs">
+                    <a :href="selectedProject?.links.docs" 
+                       target="_blank"
+                       class="inline-flex items-center space-x-2 border-2 border-telus-purple text-telus-purple px-4 py-2 rounded-lg hover:bg-telus-purple hover:text-white transition duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>View Documentation</span>
+                    </a>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>
+    <header class="bg-telus-purple text-white">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="text-white font-bold text-2xl mr-4">TELUS</div>
+                    <h1 class="text-xl font-semibold hidden md:block">AI Growth Team (AIGT) Showcase</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#gen-ai" class="text-white hover:text-gray-300">Generative AI</a>
+                    <a href="#ml-growth" class="text-white hover:text-gray-300">ML Growth</a>
+                    <a href="#enterprise-ai" class="text-white hover:text-gray-300">Enterprise AI</a>
+                    <a href="#finance-ai" class="text-white hover:text-gray-300">Finance AI</a>
+                    <a href="#team" class="text-white hover:text-gray-300">Our Team</a>
+                    <a href="#new-ideas" class="text-white hover:text-gray-300">Submit Ideas</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div x-show="mobileMenuOpen" class="md:hidden mt-2 py-2">
+                <a href="#gen-ai" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded">Generative AI</a>
+                <a href="#ml-growth" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">ML Growth</a>
+                <a href="#enterprise-ai" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Enterprise AI</a>
+                <a href="#finance-ai" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Finance AI</a>
+                <a href="#team" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Our Team</a>
+                <a href="#new-ideas" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Submit Ideas</a>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto mt-8 p-4">
+        <!-- Hero Section -->
+        <section class="bg-telus-purple text-white rounded-lg p-8 mb-12">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-4">AI Growth Team (AIGT) at TELUS</h2>
+                <p class="text-lg mb-6">Pioneering the future of AI across multiple domains to accelerate TELUS operations and enhance customer experiences.</p>
+                <a href="#new-ideas" class="inline-block bg-white text-telus-purple font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition duration-300">Share Your Ideas</a>
+            </div>
+        </section>
+
+        <!-- Generative AI Assistants -->
+        <section id="gen-ai" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                </svg>
+                Generative AI Assistants
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['customer-service-ai']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Customer Service AI</h3>
+                        <p class="text-gray-600 mb-4">Production-ready chatbot with custom UI and RAG-based knowledge integration for enhanced customer support.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Production</span>
+                    </div>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['internal-knowledge-assistant']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Internal Knowledge Assistant</h3>
+                        <p class="text-gray-600 mb-4">RAG-powered internal assistant helping TELUS teams access and utilize company knowledge efficiently.</p>
+                        <span class="inline-block bg-telus-purple text-white text-xs px-2 py-1 rounded-full">In Progress</span>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- ML Growth -->
+        <section id="ml-growth" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                ML Growth
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['advanced-llm-research']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Advanced LLM Research</h3>
+                        <p class="text-gray-600 mb-4">Exploring cutting-edge language models and their applications in TELUS services.</p>
+                        <span class="inline-block bg-telus-purple text-white text-xs px-2 py-1 rounded-full">Research</span>
+                    </div>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['framework-innovation']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Framework Innovation</h3>
+                        <p class="text-gray-600 mb-4">Testing and implementing new AI frameworks to enhance our technological capabilities.</p>
+                        <span class="inline-block bg-telus-amber text-white text-xs px-2 py-1 rounded-full">POC</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enterprise AI -->
+        <section id="enterprise-ai" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                Enterprise AI
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['mlops-framework']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">MLOps Framework</h3>
+                        <p class="text-gray-600 mb-4">Standardized evaluation and deployment framework for machine learning models.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Deployed</span>
+                    </div>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['llmops-platform']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">LLMOps Platform</h3>
+                        <p class="text-gray-600 mb-4">Comprehensive platform for managing and deploying large language models.</p>
+                        <span class="inline-block bg-telus-blue text-white text-xs px-2 py-1 rounded-full">Beta</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Finance AI -->
+        <section id="finance-ai" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Finance AI
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['fraud-detection']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Fraud Detection System</h3>
+                        <p class="text-gray-600 mb-4">Advanced ML models for detecting and preventing fraudulent transactions.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Production</span>
+                    </div>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['cash-flow-prediction']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Cash Flow Prediction</h3>
+                        <p class="text-gray-600 mb-4">ML-powered system for accurate cash flow forecasting and optimization.</p>
+                        <span class="inline-block bg-telus-gray text-white text-xs px-2 py-1 rounded-full">Archived</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Team Section -->
+        <section id="team" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                Meet Our Team
+            </h2>
+            
+            <!-- Leadership -->
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-telus-purple">Leadership</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-telus-purple text-white rounded-full flex items-center justify-center text-xl font-bold">
+                                JD
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Jane Doe</h4>
+                            <p class="text-gray-600">Director, AI Growth Team</p>
+                            <a href="mailto:jane.doe@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">jane.doe@telus.com</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-telus-purple text-white rounded-full flex items-center justify-center text-xl font-bold">
+                                JS
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">John Smith</h4>
+                            <p class="text-gray-600">Senior Program Manager</p>
+                            <a href="mailto:john.smith@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">john.smith@telus.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Members -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- ML Engineers -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">ML Engineering</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">AK</div>
+                            <div>
+                                <h4 class="font-medium">Alice Kim</h4>
+                                <a href="mailto:alice.kim@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">alice.kim@telus.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">RP</div>
+                            <div>
+                                <h4 class="font-medium">Raj Patel</h4>
+                                <a href="mailto:raj.patel@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">raj.patel@telus.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Scientists -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Data Science</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">ML</div>
+                            <div>
+                                <h4 class="font-medium">Maria Lopez</h4>
+                                <a href="mailto:maria.lopez@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">maria.lopez@telus.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">DC</div>
+                            <div>
+                                <h4 class="font-medium">David Chen</h4>
+                                <a href="mailto:david.chen@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">david.chen@telus.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product & Design -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Product & Design</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">SB</div>
+                            <div>
+                                <h4 class="font-medium">Sarah Brown</h4>
+                                <p class="text-gray-600 text-sm">Product Manager</p>
+                                <a href="mailto:sarah.brown@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">sarah.brown@telus.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">MT</div>
+                            <div>
+                                <h4 class="font-medium">Mike Thompson</h4>
+                                <p class="text-gray-600 text-sm">UX Designer</p>
+                                <a href="mailto:mike.thompson@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">mike.thompson@telus.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Submit New Ideas -->
+        <section id="new-ideas" class="mb-12" x-data="{ title: '', description: '', submitted: false }">
+            <h2 class="text-2xl font-bold mb-6 text-telus-purple flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Submit New Ideas
+            </h2>
+            <form class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 border border-gray-200" x-show="!submitted" @submit.prevent="submitted = true">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="idea-title">
+                        Idea Title
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-telus-purple focus:border-transparent transition duration-300" id="idea-title" type="text" placeholder="Enter your idea title" x-model="title" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="idea-description">
+                        Description
+                    </label>
+                    <textarea class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-telus-purple focus:border-transparent transition duration-300 min-h-[150px]" id="idea-description" placeholder="Describe your idea in detail" x-model="description" required></textarea>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-telus-purple hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-telus-purple transition duration-300 w-full sm:w-auto" type="submit">
+                        Submit Idea
+                    </button>
+                </div>
+            </form>
+            <div x-show="submitted" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                <p class="font-bold">Thank you for your submission!</p>
+                <p>We've received your idea and will review it shortly.</p>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-gray-200 p-4 mt-8">
+        <p class="text-center text-gray-600">&copy; 2025 TELUS AI Growth Team (AIGT) - Part of AI Accelerator</p>
+    </footer>
+</body>
+</html>
