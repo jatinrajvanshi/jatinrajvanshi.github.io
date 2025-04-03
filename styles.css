@@ -1,0 +1,161 @@
+:root {
+    --telus-purple: #4B286D;
+    --telus-green: #00A400;
+    --telus-amber: #FFB800;
+    --telus-blue: #2B70C9;
+    --telus-gray: #71757B;
+}
+
+/* Base Styles */
+.bg-telus-purple { background-color: var(--telus-purple); }
+.text-telus-green { color: var(--telus-green); }
+.border-telus-purple { border-color: var(--telus-purple); }
+.bg-telus-green { background-color: var(--telus-green); }
+.bg-telus-amber { background-color: var(--telus-amber); }
+.bg-telus-blue { background-color: var(--telus-blue); }
+.bg-telus-gray { background-color: var(--telus-gray); }
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Enhanced Card Animations */
+.bg-white.shadow-md {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.bg-white.shadow-md:hover {
+    transform: scale(1.02) translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Button Animations */
+button, .inline-block {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+button:active, .inline-block:active {
+    transform: scale(0.98);
+}
+
+/* Navigation Link Animations */
+nav a {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Form Input Animations */
+input, textarea {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:focus, textarea:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Team Member Card Animations */
+.flex.items-start.space-x-4, .flex.items-center.space-x-3 {
+    transition: transform 0.3s ease;
+}
+
+.flex.items-start.space-x-4:hover, .flex.items-center.space-x-3:hover {
+    transform: translateX(8px);
+}
+
+/* Modal Animations */
+.fixed.inset-0 {
+    backdrop-filter: blur(5px);
+    transition: backdrop-filter 0.3s ease;
+}
+
+/* Status Badge Animations */
+.inline-block.rounded-full {
+    transition: all 0.3s ease;
+}
+
+.inline-block.rounded-full:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Entrance Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-on-scroll {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-on-scroll:not(.in-view) {
+    opacity: 0.4;
+    transform: translateY(20px);
+}
+
+.animate-on-scroll.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Ensure content is visible if JavaScript is disabled */
+.no-js .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+}
+
+/* Stagger child animations */
+.animate-on-scroll .bg-white {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: calc(var(--child-index, 0) * 100ms);
+}
+
+/* Hero Section Special Animation */
+.bg-telus-purple.text-white.rounded-lg {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.bg-telus-purple.text-white.rounded-lg:hover {
+    transform: scale(1.01);
+}
+
+/* Submit Button Special Effect */
+button[type="submit"] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(75, 40, 109, 0.2);
+}
