@@ -20,7 +20,7 @@
      x-transition:leave="transition ease-in duration-200"
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
-     @click="closeModal()">
+     @click="showModal = false">
     
     <!-- Modal Content -->
     <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto" 
@@ -36,7 +36,7 @@
         <!-- Modal Header -->
         <div class="bg-telus-purple text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
             <h3 class="text-xl font-semibold" x-text="selectedProject?.title"></h3>
-            <button @click="closeModal()" class="text-white hover:text-gray-300">
+            <button @click="showModal = false" class="text-white hover:text-gray-300">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -95,17 +95,6 @@
                         <span>View Documentation</span>
                     </a>
                 </template>
-                <template x-if="selectedProject?.links.demo">
-                    <a :href="selectedProject?.links.demo" 
-                       target="_blank"
-                       class="inline-flex items-center space-x-2 border-2 border-telus-purple text-telus-purple px-4 py-2 rounded-lg hover:bg-telus-purple hover:text-white transition duration-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Watch Demo</span>
-                    </a>
-                </template>
             </div>
         </div>
     </div>
@@ -126,7 +115,6 @@
                     <a href="#finance-ai" class="text-white hover:text-gray-300">Finance AI</a>
                     <a href="#team" class="text-white hover:text-gray-300">Our Team</a>
                     <a href="#new-ideas" class="text-white hover:text-gray-300">Submit Ideas</a>
-                    <a href="admin.html" class="text-white hover:text-gray-300">Manage Projects</a>
                 </nav>
 
                 <!-- Mobile Menu Button -->
@@ -145,7 +133,6 @@
                 <a href="#finance-ai" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Finance AI</a>
                 <a href="#team" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Our Team</a>
                 <a href="#new-ideas" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Submit Ideas</a>
-                <a href="admin.html" @click="mobileMenuOpen = false" class="block text-white hover:bg-purple-800 px-2 py-1 rounded mt-1">Manage Projects</a>
             </div>
         </div>
     </header>
@@ -168,23 +155,20 @@
                 Generative AI Assistants
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-                <template x-for="[id, project] in Object.entries(projects).filter(([_, p]) => p.section === 'Generative AI')" :key="id">
-                    <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
-                        <div class="cursor-pointer" @click="selectProject(id)">
-                            <h3 class="text-lg font-semibold mb-2" x-text="project.title"></h3>
-                            <p class="text-gray-600 mb-4" x-text="project.problem"></p>
-                            <span class="inline-block text-white text-xs px-2 py-1 rounded-full"
-                                  :class="{
-                                      'bg-telus-green': project.status === 'Production',
-                                      'bg-telus-purple': project.status === 'In Progress',
-                                      'bg-telus-amber': project.status === 'POC',
-                                      'bg-telus-blue': project.status === 'Beta',
-                                      'bg-telus-gray': project.status === 'Archived'
-                                  }"
-                                  x-text="project.status"></span>
-                        </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['customer-service-ai']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Customer Service AI</h3>
+                        <p class="text-gray-600 mb-4">Production-ready chatbot with custom UI and RAG-based knowledge integration for enhanced customer support.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Production</span>
                     </div>
-                </template>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['internal-knowledge-assistant']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Internal Knowledge Assistant</h3>
+                        <p class="text-gray-600 mb-4">RAG-powered internal assistant helping TELUS teams access and utilize company knowledge efficiently.</p>
+                        <span class="inline-block bg-telus-purple text-white text-xs px-2 py-1 rounded-full">In Progress</span>
+                    </div>
+                </div>
                 
             </div>
         </section>
@@ -198,23 +182,20 @@
                 ML Growth
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-                <template x-for="[id, project] in Object.entries(projects).filter(([_, p]) => p.section === 'ML Growth')" :key="id">
-                    <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
-                        <div class="cursor-pointer" @click="selectProject(id)">
-                            <h3 class="text-lg font-semibold mb-2" x-text="project.title"></h3>
-                            <p class="text-gray-600 mb-4" x-text="project.problem"></p>
-                            <span class="inline-block text-white text-xs px-2 py-1 rounded-full"
-                                  :class="{
-                                      'bg-telus-green': project.status === 'Production',
-                                      'bg-telus-purple': project.status === 'In Progress',
-                                      'bg-telus-amber': project.status === 'POC',
-                                      'bg-telus-blue': project.status === 'Beta',
-                                      'bg-telus-gray': project.status === 'Archived'
-                                  }"
-                                  x-text="project.status"></span>
-                        </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['advanced-llm-research']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Advanced LLM Research</h3>
+                        <p class="text-gray-600 mb-4">Exploring cutting-edge language models and their applications in TELUS services.</p>
+                        <span class="inline-block bg-telus-purple text-white text-xs px-2 py-1 rounded-full">Research</span>
                     </div>
-                </template>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['framework-innovation']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Framework Innovation</h3>
+                        <p class="text-gray-600 mb-4">Testing and implementing new AI frameworks to enhance our technological capabilities.</p>
+                        <span class="inline-block bg-telus-amber text-white text-xs px-2 py-1 rounded-full">POC</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -227,23 +208,20 @@
                 Enterprise AI
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-                <template x-for="[id, project] in Object.entries(projects).filter(([_, p]) => p.section === 'Enterprise AI')" :key="id">
-                    <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
-                        <div class="cursor-pointer" @click="selectProject(id)">
-                            <h3 class="text-lg font-semibold mb-2" x-text="project.title"></h3>
-                            <p class="text-gray-600 mb-4" x-text="project.problem"></p>
-                            <span class="inline-block text-white text-xs px-2 py-1 rounded-full"
-                                  :class="{
-                                      'bg-telus-green': project.status === 'Production',
-                                      'bg-telus-purple': project.status === 'In Progress',
-                                      'bg-telus-amber': project.status === 'POC',
-                                      'bg-telus-blue': project.status === 'Beta',
-                                      'bg-telus-gray': project.status === 'Archived'
-                                  }"
-                                  x-text="project.status"></span>
-                        </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['mlops-framework']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">MLOps Framework</h3>
+                        <p class="text-gray-600 mb-4">Standardized evaluation and deployment framework for machine learning models.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Deployed</span>
                     </div>
-                </template>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['llmops-platform']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">LLMOps Platform</h3>
+                        <p class="text-gray-600 mb-4">Comprehensive platform for managing and deploying large language models.</p>
+                        <span class="inline-block bg-telus-blue text-white text-xs px-2 py-1 rounded-full">Beta</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -256,23 +234,20 @@
                 Finance AI
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-                <template x-for="[id, project] in Object.entries(projects).filter(([_, p]) => p.section === 'Finance')" :key="id">
-                    <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
-                        <div class="cursor-pointer" @click="selectProject(id)">
-                            <h3 class="text-lg font-semibold mb-2" x-text="project.title"></h3>
-                            <p class="text-gray-600 mb-4" x-text="project.problem"></p>
-                            <span class="inline-block text-white text-xs px-2 py-1 rounded-full"
-                                  :class="{
-                                      'bg-telus-green': project.status === 'Production',
-                                      'bg-telus-purple': project.status === 'In Progress',
-                                      'bg-telus-amber': project.status === 'POC',
-                                      'bg-telus-blue': project.status === 'Beta',
-                                      'bg-telus-gray': project.status === 'Archived'
-                                  }"
-                                  x-text="project.status"></span>
-                        </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['fraud-detection']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Fraud Detection System</h3>
+                        <p class="text-gray-600 mb-4">Advanced ML models for detecting and preventing fraudulent transactions.</p>
+                        <span class="inline-block bg-telus-green text-white text-xs px-2 py-1 rounded-full">Production</span>
                     </div>
-                </template>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition duration-300 hover:shadow-xl">
+                    <div class="cursor-pointer" @click="selectedProject = projects['cash-flow-prediction']; showModal = true">
+                        <h3 class="text-lg font-semibold mb-2">Cash Flow Prediction</h3>
+                        <p class="text-gray-600 mb-4">ML-powered system for accurate cash flow forecasting and optimization.</p>
+                        <span class="inline-block bg-telus-gray text-white text-xs px-2 py-1 rounded-full">Archived</span>
+                    </div>
+                </div>
             </div>
         </section>
         
@@ -289,19 +264,6 @@
             <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
                 <h3 class="text-xl font-semibold mb-4 text-telus-purple">Leadership</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-telus-purple text-white rounded-full flex items-center justify-center text-xl font-bold">
-                                AG
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold">Alexandre Guilbault</h4>
-                            <p class="text-gray-600">Director</p>
-                            <a href="mailto:alexandre.guilbault@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">alexandre.guilbault@telus.com</a>
-                        </div>
-                    </div>
                     <div class="flex items-start space-x-4">
                         <div class="flex-shrink-0">
                             <div class="w-16 h-16 bg-telus-purple text-white rounded-full flex items-center justify-center text-xl font-bold">
@@ -314,153 +276,83 @@
                             <a href="mailto:pranav.arya@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">pranav.arya@telus.com</a>
                         </div>
                     </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-telus-purple text-white rounded-full flex items-center justify-center text-xl font-bold">
+                                AG
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Alexandre Guilbault</h4>
+                            <p class="text-gray-600">Director</p>
+                            <a href="mailto:alexandre.guilbault@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">alexandre.guilbault@telus.com</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Team Members -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-on-scroll">
-                <!-- Squad Leads -->
+                <!-- ML Engineers -->
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Squad Leads</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">ML Engineering</h3>
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">DS</div>
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">AK</div>
                             <div>
-                                <h4 class="font-medium">Divyansh Singhal</h4>
-                                <a href="mailto:divyansh.singhal@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">divyansh.singhal@telus.com</a>
+                                <h4 class="font-medium">Alice Kim</h4>
+                                <a href="mailto:alice.kim@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">alice.kim@telus.com</a>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">YK</div>
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">RP</div>
                             <div>
-                                <h4 class="font-medium">Yasmina Khalifé</h4>
-                                <a href="mailto:yasmina.khalife@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">yasmina.khalife@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">OR</div>
-                            <div>
-                                <h4 class="font-medium">Owen Ren</h4>
-                                <a href="mailto:owen.ren@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">owen.ren@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">NP</div>
-                            <div>
-                                <h4 class="font-medium">Nidhi Patel</h4>
-                                <a href="mailto:nidhi.patel@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">nidhi.patel@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">EM</div>
-                            <div>
-                                <h4 class="font-medium">Emilie Morin</h4>
-                                <a href="mailto:emilie.morin@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">emilie.morin@telus.com</a>
+                                <h4 class="font-medium">Raj Patel</h4>
+                                <a href="mailto:raj.patel@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">raj.patel@telus.com</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Data Science/ Machine Learning -->
+                <!-- Data Scientists -->
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Data Science/ Machine Learning</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Data Science</h3>
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">AA</div>
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">ML</div>
                             <div>
-                                <h4 class="font-medium">Ahana Ahluwalia</h4>
-                                <a href="mailto:ahana.ahluwalia@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">ahana.ahluwalia@telus.com</a>
+                                <h4 class="font-medium">Maria Lopez</h4>
+                                <a href="mailto:maria.lopez@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">maria.lopez@telus.com</a>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">AW</div>
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">DC</div>
                             <div>
-                                <h4 class="font-medium">Ali Waheed</h4>
-                                <a href="mailto:ali.waheed@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">ali.waheed@telus.com</a>
+                                <h4 class="font-medium">David Chen</h4>
+                                <a href="mailto:david.chen@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">david.chen@telus.com</a>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">AS</div>
-                            <div>
-                                <h4 class="font-medium">Aniket Shah</h4>
-                                <a href="mailto:aniket.shah@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">aniket.shah@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">CL</div>
-                            <div>
-                                <h4 class="font-medium">Charlotte Lombard</h4>
-                                <a href="mailto:charlotte.lombard@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">charlotte.lombard@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">MG</div>
-                            <div>
-                                <h4 class="font-medium">Matheus Gonzaga</h4>
-                                <a href="mailto:matheus.gonzaga1@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">matheus.gonzaga1@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">MN</div>
-                            <div>
-                                <h4 class="font-medium">Miguel Natal</h4>
-                                <a href="mailto:miguel.natal@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">miguel.natal@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">MA</div>
-                            <div>
-                                <h4 class="font-medium">Muneeb Arshad</h4>
-                                <a href="mailto:Muneeb.Arshad@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">Muneeb.Arshad@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">NR</div>
-                            <div>
-                                <h4 class="font-medium">Navneet Ratnakirti</h4>
-                                <a href="mailto:navneet.ratnakirti@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">navneet.ratnakirti@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">PP</div>
-                            <div>
-                                <h4 class="font-medium">Pedro Pimenta</h4>
-                                <a href="mailto:pedro.pimenta@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">pedro.pimenta@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">PS</div>
-                            <div>
-                                <h4 class="font-medium">Prabhsimran Singh</h4>
-                                <a href="mailto:prabhsimran.singh@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">prabhsimran.singh@telus.com</a>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">RB</div>
-                            <div>
-                                <h4 class="font-medium">Rubens Bolgheroni</h4>
-                                <a href="mailto:rubens.bolgheroni@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">rubens.bolgheroni@telus.com</a>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- Product & Design -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Product & Design</h3>
+                    <div class="space-y-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">SB</div>
                             <div>
-                                <h4 class="font-medium">Shiyan Boxer</h4>
-                                <a href="mailto:shiyan.boxer@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">shiyan.boxer@telus.com</a>
+                                <h4 class="font-medium">Sarah Brown</h4>
+                                <p class="text-gray-600 text-sm">Product Manager</p>
+                                <a href="mailto:sarah.brown@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">sarah.brown@telus.com</a>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Product Management -->
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-telus-purple">Product Management</h3>
-                    <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">JR</div>
+                            <div class="w-10 h-10 bg-telus-purple text-white rounded-full flex items-center justify-center font-medium">MT</div>
                             <div>
-                                <h4 class="font-medium">Jatin Rajvanshi</h4>
-                                <a href="mailto:jatin.rajvanshi@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">jatin.rajvanshi@telus.com</a>
+                                <h4 class="font-medium">Mike Thompson</h4>
+                                <p class="text-gray-600 text-sm">UX Designer</p>
+                                <a href="mailto:mike.thompson@telus.com" class="text-telus-purple hover:text-purple-700 text-sm">mike.thompson@telus.com</a>
                             </div>
                         </div>
                     </div>
@@ -487,15 +379,6 @@
     <footer class="bg-gray-200 p-4 mt-8">
         <p class="text-center text-gray-600">&copy; 2025 TELUS AI Growth Team (AIGT) - Part of AI Accelerator</p>
     </footer>
-
-    <!-- Feedback Popup -->
-    <div id="feedbackPopup" class="fixed bottom-4 right-4 bg-telus-purple text-white px-3 py-2 rounded-lg shadow-lg cursor-pointer opacity-70 hover:opacity-100 transition-all duration-300 hover:transform hover:scale-105 flex items-center space-x-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-        </svg>
-        <span class="text-sm">Share Feedback</span>
-    </div>
-
     <script>
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -505,11 +388,6 @@
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Feedback popup click handler
-        document.getElementById('feedbackPopup').addEventListener('click', function() {
-            window.open('https://docs.google.com/forms/d/e/1FAIpQLSctMy2TxVexOmuaKlEZfgVrgw22c7WCb74XWgyippNYshAZww/viewform?usp=header', '_blank');
         });
     </script>
 </body>
