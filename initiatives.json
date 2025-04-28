@@ -1,0 +1,25 @@
+{
+  "initiatives": [
+    {
+      "id": "init1",
+      "name": "AI Model Governance Framework",
+      "intendedOutcome": "Establish standardized practices for AI model deployment and monitoring",
+      "team": "GenAI Enablement",
+      "quarter": "Q1"
+    },
+    {
+      "id": "init2",
+      "name": "Squad Innovation Lab",
+      "intendedOutcome": "Create dedicated space for rapid prototyping and experimentation",
+      "team": "Squad Incubator",
+      "quarter": "Q2"
+    },
+    {
+      "id": "init3",
+      "name": "Enterprise AI Strategy Roadmap",
+      "intendedOutcome": "Develop a comprehensive plan for AI integration across business units",
+      "team": "Enterprise AI",
+      "quarter": "Q3"
+    }
+  ]
+}
